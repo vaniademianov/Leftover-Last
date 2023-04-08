@@ -26,6 +26,10 @@ class Player(pygame.sprite.Sprite):
         self.x_vel = 0
         self.y_vel = 0
         self.unt = unt
+        self.left=False
+        self.is_breaking = True
+        self.inv = [None, None, None,None,None,None,None]
+        self.slot = 0
     def left_check(self) -> bool:
         self.rect.x -= 10
         if pygame.sprite.spritecollide(self, self.unt, False):
@@ -60,19 +64,22 @@ class Player(pygame.sprite.Sprite):
             return True
     def update(self):
         keys = pygame.key.get_pressed()
+        dh = self.down_check()
         if keys[pygame.K_s]:
             self.y_vel = 10
-        if keys[pygame.K_w] and not self.is_jump:
+            
+        if keys[pygame.K_w] and not self.is_jump and not dh:
             self.y_vel = -12
             self.is_jump = True
         if keys[pygame.K_d]:
             if self.x_vel < self.max_speed: self.x_vel+= self.speed
+
         elif keys[pygame.K_a]:
             if self.x_vel > self.min_speed: self.x_vel+= -self.speed
         if self.is_jump and self.y_vel > 11:
             self.y_vel = 0
             self.is_jump = False
-        dh = self.down_check()
+        
         uh =self.up_check()
         rc = self.right_check()
         lc =self.left_check()
@@ -89,7 +96,44 @@ class Player(pygame.sprite.Sprite):
         self.x_vel *= 0.75
         if dh:
             self.y_vel += 1
-        
+            self.is_breaking=False
+        if self.x_vel > 0 and self.x_vel<0.2:
+            self.x_vel = 0
+        if self.x_vel < 0 and self.x_vel> -0.2:
+            self.x_vel = 0
+        if self.x_vel != 0:
+            self.is_breaking = False
+        if self.x_vel<0 and self.left == False:
+            self.image=pygame.transform.flip(self.image,True,False)
+            self.left=True
+        elif self.x_vel > 0 and self.left == True:
+            self.image=pygame.transform.flip(self.image,True,False)
+            self.left= False
+    def add_inv(self, item):
+        d = False
+        for o in self.inv:
+            if o != None:
+                if o.count < 64 and o.type == item.type and not d:
+                    if o.count +item.count <= 64:
+                        o.count = o.count + item.count
+                        d = True
+                        break
+                    else:
+                        o.count = 64
+                        ik = (o.count +item.count) -64
+                        nw = item
+                        nw.count = ik
+                        self.inv.append(ik)
+                        d = True
+                        break
+        if not d:
+            for i in range(len(self.inv)):
+                if self.inv[i] == None:
+                    self.inv[i] = item
+                    print("added in slot",i)
+                    return
+            self.inv.append(item)       
+            
 class Wall(pygame.sprite.Sprite):
     def __init__(self, pos, surface, color):
         pygame.sprite.Sprite.__init__(self)
