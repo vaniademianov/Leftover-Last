@@ -35,7 +35,8 @@ for i in range(64):
     
 player = p.Player((WIDTH / 2, HEIGHT-200), pygame.Surface((30, 25)), pygame.Surface((30, 25)), RED, obj)
 all_sprites.add(player)
-slots.add(s.Slot((WIDTH/3,HEIGHT),0,player))
+for i in range(9):
+    slots.add(s.Slot((50+(i*80),HEIGHT-40),i,player))
 # slots.add(s.Slot((WIDTH/3+50,HEIGHT),1,player))
 running = True
 while running:
@@ -63,6 +64,38 @@ while running:
                         breaking = b.Break(sprite.rect.topleft,sprite,player)
                         all_sprites.add(breaking)
                         break
+        if event.type == pygame.MOUSEWHEEL:
+            x = event.y
+            if x>0:
+                player.slot += 1
+            else:
+                player.slot -= 1
+
+            if player.slot > 8:
+                player.slot = 0
+            if player.slot < 0:
+                player.slot = 8    
+        if event.type == pygame.KEYDOWN:
+            pressed = pygame.key.get_pressed()
+            if pressed[pygame.K_1]:
+                player.slot = 0
+            if pressed[pygame.K_2]:
+                player.slot = 1
+            if pressed[pygame.K_3]:
+                player.slot = 2
+            if pressed[pygame.K_4]:
+                player.slot = 3
+            if pressed[pygame.K_5]:
+                player.slot = 4
+            if pressed[pygame.K_6]:
+                player.slot = 5
+            if pressed[pygame.K_7]:
+                player.slot = 6
+            if pressed[pygame.K_8]:
+                player.slot = 7
+            if pressed[pygame.K_9]:
+                player.slot = 8
+
     all_sprites.update()
     
     obj.update(plauer=player)
@@ -73,6 +106,6 @@ while running:
     slots.update(scr=screen)
     slots.draw(screen)
     
-    pygame.display.flip() 
+    pygame.display.flip()  
 
 pygame.quit()

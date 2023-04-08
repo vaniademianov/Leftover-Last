@@ -28,7 +28,7 @@ class Player(pygame.sprite.Sprite):
         self.unt = unt
         self.left=False
         self.is_breaking = True
-        self.inv = [None, None, None,None,None,None,None]
+        self.inv = [None, None, None,None,None,None,None,None,None,None]
         self.slot = 0
     def left_check(self) -> bool:
         self.rect.x -= 10
@@ -130,7 +130,6 @@ class Player(pygame.sprite.Sprite):
             for i in range(len(self.inv)):
                 if self.inv[i] == None:
                     self.inv[i] = item
-                    print("added in slot",i)
                     return
             self.inv.append(item)       
             
