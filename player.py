@@ -11,7 +11,7 @@ GREEN = (0, 255, 0)
 # BLUE = (0, 0, 255)
 
 blue_img = pygame.image.load("res/blue.png")
-blue_resized = pygame.transform.scale(blue_img, (blue_img.get_width()/3,blue_img.get_height()/3))
+blue_resized = pygame.transform.scale(blue_img, (blue_img.get_width()/5,blue_img.get_height()/5))
 class Player(pygame.sprite.Sprite):
     def __init__(self, pos, surface1, surface2, color, unt):
         pygame.sprite.Sprite.__init__(self)
