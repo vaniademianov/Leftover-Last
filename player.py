@@ -31,20 +31,20 @@ class Player(pygame.sprite.Sprite):
         self.inv = [None, None, None,None,None,None,None,None,None,None]
         self.slot = 0
     def left_check(self) -> bool:
-        self.rect.x -= 10
+        self.rect.x -= 5
         if pygame.sprite.spritecollide(self, self.unt, False):
-            self.rect.x += 10
+            self.rect.x += 5
             return False
         else:
-            self.rect.x += 10
+            self.rect.x += 5
             return True
     def right_check(self) -> bool:
-        self.rect.x += 10
+        self.rect.x += 5
         if pygame.sprite.spritecollide(self, self.unt, False):
-            self.rect.x -= 10
+            self.rect.x -= 5
             return False
         else:
-            self.rect.x -= 10
+            self.rect.x -= 5
             return True
     def up_check(self) -> bool:
         self.rect.y -= 10

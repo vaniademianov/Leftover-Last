@@ -4,11 +4,12 @@ import player as p
 import ground as g
 import breakk as b
 import slot as s
+import stone as st
 WIDTH = 800
 HEIGHT = 650
 FPS = 30
 
-# Задаем цвета
+# Задаем цвета 
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
@@ -32,6 +33,12 @@ for i in range(64):
     obj.add(grd)
     breakable.add(grd)
     gr_x+=grd.rect.width-1
+for x in range(64): 
+    for y in range(9):
+        HEIGHT+48
+        grd = st.Stone((x*46,(HEIGHT+46)+y*46))
+        obj.add(grd)
+        breakable.add(grd)
     
 player = p.Player((WIDTH / 2, HEIGHT-200), pygame.Surface((30, 25)), pygame.Surface((30, 25)), RED, obj)
 all_sprites.add(player)
