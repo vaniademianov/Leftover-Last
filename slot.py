@@ -3,7 +3,7 @@ pygame.font.init()
 font = pygame.font.SysFont('Comic Sans MS', 20)
 slot_txt = pygame.image.load("res/slot_act.png")
 slot_act_txt = pygame.transform.scale(slot_txt,(80,80))
-BLUE = (97, 110, 229)
+BLUE = (244, 230, 15)
 class Slot(pygame.sprite.Sprite):
     def __init__(self, pos, number,player):
         pygame.sprite.Sprite.__init__(self)

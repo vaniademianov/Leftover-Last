@@ -16,7 +16,8 @@ RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
 
-
+nick = input("Enter nickname: ")
+print("You logged in as", nick)
 pygame.init()
 pygame.mixer.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT),pygame.RESIZABLE)
@@ -26,28 +27,30 @@ all_sprites = pygame.sprite.Group()
 obj = pygame.sprite.Group()
 slots = pygame.sprite.Group()
 breakable = pygame.sprite.Group()
+plyr = pygame.sprite.Group()
 obj.add(p.Wall((WIDTH // 2 - 100, HEIGHT // 2), pygame.Surface((200, 50)), RED))
 gr_x = 0
-for i in range(64): 
-    grd = g.Ground((gr_x, HEIGHT))
+    
+player = p.Player((WIDTH / 2, HEIGHT-200), pygame.Surface((30, 25)), pygame.Surface((30, 25)), RED, obj)
+plyr.add(player)
+for i in range(20): 
+    grd = g.Ground((gr_x, HEIGHT),player)
     obj.add(grd)
     breakable.add(grd)
     gr_x+=grd.rect.width-1
-for x in range(64): 
+
+for x in range(20): 
     for y in range(9):
-        HEIGHT+48
-        grd = st.Stone((x*46,(HEIGHT+46)+y*46))
+        grd = st.Stone((x*(st.grass_texture.get_width()-1),(HEIGHT+grd.rect.height-1)+y*(st.grass_texture.get_height()-1)),player)
         obj.add(grd)
-        breakable.add(grd)
-    
-player = p.Player((WIDTH / 2, HEIGHT-200), pygame.Surface((30, 25)), pygame.Surface((30, 25)), RED, obj)
-all_sprites.add(player)
+        breakable.add(grd)      
+
 for i in range(9):
     slots.add(s.Slot((50+(i*80),HEIGHT-40),i,player))
 # slots.add(s.Slot((WIDTH/3+50,HEIGHT),1,player))
 running = True
 while running:
-    clock.tick(FPS)
+    clock.tick(FPS) 
     for event in pygame.event.get():
 
         if event.type == pygame.QUIT:
@@ -57,7 +60,7 @@ while running:
             HEIGHT = event.h
             surface = pygame.display.set_mode((event.w, event.h),
                                               pygame.RESIZABLE)
-
+ 
             player.rect.x = WIDTH / 2
             player.rect.y = 50
         if event.type == pygame.MOUSEBUTTONDOWN:
@@ -104,13 +107,17 @@ while running:
                 player.slot = 8
 
     all_sprites.update()
-    
-    obj.update(plauer=player)
+    x = player.x_vel
+    y = player.y_vel
+    for sp in obj.sprites():    
+        a = sp.update(plauer=player,x_vel=x,y_vel=y)
     screen.fill(BLACK)
     
     obj.draw(screen)
     all_sprites.draw(screen)
     slots.update(scr=screen)
+    plyr.update()
+    plyr.draw(screen)
     slots.draw(screen)
     
     pygame.display.flip()  

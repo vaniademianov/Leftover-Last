@@ -12,24 +12,18 @@ GREEN = (0, 255, 0)
 
 blue_img = pygame.image.load("res/blue.png")
 blue_resized = pygame.transform.scale(blue_img, (blue_img.get_width()/5,blue_img.get_height()/5))
-class Player(pygame.sprite.Sprite):
-    def __init__(self, pos, surface1, surface2, color, unt):
-        pygame.sprite.Sprite.__init__(self)
-        x, y = pos
-        self.image = blue_resized
+hit_img = pygame.image.load("res/hitbox.png")
+hit_resized = pygame.transform.scale(hit_img, (hit_img.get_width()/9,hit_img.get_height()/7))
+class Part(pygame.sprite.Sprite):
+    def __init__(self, parent, pos,unt):
+        self.image = hit_resized
         self.rect = self.image.get_rect()
         self.rect.topleft = pos
-        self.speed = 1.5
-        self.max_speed = 10
-        self.min_speed = -10
-        self.is_jump = True
-        self.x_vel = 0
-        self.y_vel = 0
+        self.player = parent
         self.unt = unt
-        self.left=False
-        self.is_breaking = True
-        self.inv = [None, None, None,None,None,None,None,None,None,None]
-        self.slot = 0
+    def update(self) -> None:
+        self.rect.center = self.player.rect.center
+
     def left_check(self) -> bool:
         self.rect.x -= 5
         if pygame.sprite.spritecollide(self, self.unt, False):
@@ -55,16 +49,38 @@ class Player(pygame.sprite.Sprite):
             self.rect.y += 10
             return True
     def down_check(self) -> bool:
-        self.rect.y += 10
+        self.rect.y += 14
         if pygame.sprite.spritecollide(self, self.unt, False):
-            self.rect.y -= 10
+            self.rect.y -= 14
             return False
         else:
-            self.rect.y -= 10
+            self.rect.y -= 14
             return True
+class Player(pygame.sprite.Sprite):
+    def __init__(self, pos, surface1, surface2, color, unt):
+        pygame.sprite.Sprite.__init__(self)
+        x, y = pos
+        self.image = blue_resized
+        self.rect = self.image.get_rect()
+        self.hitbox = Part(self,pos,unt)
+        self.rect.topleft = pos
+        self.speed = 1.5
+        self.max_speed = 10
+        self.min_speed = -10
+        self.is_jump = True
+        self.x_vel = 0
+        self.y_vel = 0
+        self.unt = unt
+        self.left=False
+        self.is_breaking = True
+        self.inv = [None, None, None,None,None,None,None,None,None,None]
+        self.slot = 0
+        self.walls_updated = 0
     def update(self):
+        
         keys = pygame.key.get_pressed()
-        dh = self.down_check()
+        self.hitbox.update()
+        dh = self.hitbox.down_check()
         if keys[pygame.K_s]:
             self.y_vel = 10
             
@@ -80,9 +96,9 @@ class Player(pygame.sprite.Sprite):
             self.y_vel = 0
             self.is_jump = False
         
-        uh =self.up_check()
-        rc = self.right_check()
-        lc =self.left_check()
+        uh =self.hitbox.up_check()
+        rc = self.hitbox.right_check()
+        lc =self.hitbox.left_check()
         if self.y_vel > 0 and not dh:
             self.y_vel = 0
             self.is_jump = False
@@ -140,9 +156,10 @@ class Wall(pygame.sprite.Sprite):
         self.image.fill(color)
         self.rect = self.image.get_rect()
         self.rect.topleft = pos
-    def update(self, plauer):
-        self.rect.x += -plauer.x_vel
-        self.rect.y += -plauer.y_vel
+    def update(self, plauer,x_vel,y_vel):
+        a = self.rect.center
+        self.rect.centerx += -x_vel
+        self.rect.centery += -y_vel
 # class Part(pygame.sprite.Sprite):
 #     def __init__(self, pos, surface):
 #         self.image = surface
