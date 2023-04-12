@@ -45,7 +45,6 @@ for i in range(20):
     grd = g.Ground((gr_x, HEIGHT),player)
     obj.add(grd)
     breakable.add(grd)
-    print(gr_x)
     gr_x+=grd.rect.width-1
 
 for x in range(20): 

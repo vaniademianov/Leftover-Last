@@ -25,8 +25,8 @@ class Stone(pygame.sprite.Sprite):
             self.w = 0
         elif not pygame.sprite.spritecollide(self, plauer.unt, False) and self.bk:
             self.w = 1
-        self.rect.x += -x_vel
-        self.rect.y += -y_vel
+        self.rect.x += -round(x_vel)
+        self.rect.y += -round(y_vel)
         self.rect.move(self.rect.x+(-x_vel), self.rect.y+(-y_vel))
         # print("MOVED BY: ",-x_vel,"fps:",self.i)
         return True
