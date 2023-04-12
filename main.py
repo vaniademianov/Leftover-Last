@@ -25,6 +25,9 @@ print("You logged in as", nick)
 pygame.init()
 pygame.mixer.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT),pygame.RESIZABLE)
+game_icon = pygame.image.load('res/logo.ico')
+
+pygame.display.set_icon(game_icon)
 pygame.display.set_caption("Leftover last, by Remote.NET Technologies")
 clock = pygame.time.Clock()
 all_sprites = pygame.sprite.Group()
@@ -42,6 +45,7 @@ for i in range(20):
     grd = g.Ground((gr_x, HEIGHT),player)
     obj.add(grd)
     breakable.add(grd)
+    print(gr_x)
     gr_x+=grd.rect.width-1
 
 for x in range(20): 
@@ -126,6 +130,36 @@ while running:
                             player.t()
                             player.left= False
                         break
+            if event.button == 3:  # left mouse button
+            # get the position of the mouse cursor
+                
+            # check for collisions between the mouse cursor and the grass sprite
+                
+                if player.inv[player.slot].count > 0 and player.inv[player.slot] != None and not player.is_breaking and (ut.calc_dist(player.rect.x, player.rect.y,mouse_pos[0], mouse_pos[1])/48)<3 :
+                    #all_sprites.add(breaking)
+                    px = round(mouse_pos[0]/47)*47
+                    py = round(mouse_pos[1]/47)*47
+                    print(px, py)
+                    if ut.tk(obj,pygame.Rect((px,py),(47,47))): 
+                        
+                        new_obj = player.inv[player.slot].parent_block((px,py),player)
+                        new_obj.rect.topleft = (px,py)
+                        obj.add(new_obj)
+                        breakable.add(new_obj)
+                        if player.inv[player.slot].count-1 <= 0:
+                            player.inv[player.slot] = None
+                        else:
+                            player.inv[player.slot].count-=1
+                            if player.inv[player.slot].count == 0:
+                                player.inv[player.slot] = None
+                    xd = mouse_pos[0]-player.rect.x
+                    if xd<0 and player.left == False:
+                        player.t()
+                        player.left=True
+                    elif xd > 0 and player.left == True:
+                        player.t()
+                        player.left= False
+        
         if event.type == pygame.MOUSEWHEEL:
             x = event.y
             if x>0:

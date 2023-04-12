@@ -10,3 +10,9 @@ def checkFocus(e, display):
       return False
    else:
       return True
+def tk(gr:pygame.sprite.Group, rect:pygame.Rect):
+   a = True
+   for sp in gr.sprites():
+      if rect.colliderect(sp.rect):
+         a =False
+   return a

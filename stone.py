@@ -6,7 +6,7 @@ grass_texture = pygame.transform.scale(grass_texture, (48,48))
 class Stone(pygame.sprite.Sprite):
     def __init__(self, pos, player):
         pygame.sprite.Sprite.__init__(self)
-        self.brightness = 0.8
+        self.brightness = 1
         self.image = grass_texture.convert_alpha() 
         self.image.set_alpha(int(self.brightness * 255))
         self.rect = self.image.get_rect()
@@ -18,7 +18,7 @@ class Stone(pygame.sprite.Sprite):
     # def get_nearest(x,y):
     #     return (x/grass_texture.get_width(),y/grass_texture.get_height())
     def update(self, plauer,x_vel,y_vel):
-        self.brightness = 0.7-(ut.calc_dist(self.rect.x, self.rect.y, plauer.rect.x, plauer.rect.y)/480)
+        #self.brightness = 0.7-(ut.calc_dist(self.rect.x, self.rect.y, plauer.rect.x, plauer.rect.y)/480)
         self.image.set_alpha(int(self.brightness * 255))
         self.rect.y += self.w
         if pygame.sprite.spritecollide(self, plauer.unt, False) and self.bk:
