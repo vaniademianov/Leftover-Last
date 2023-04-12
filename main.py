@@ -5,6 +5,8 @@ import ground as g
 import breakk as b
 import slot as s
 import stone as st
+import utils as ut
+import mixer as mx
 WIDTH = 800
 HEIGHT = 650
 FPS = 30
@@ -27,6 +29,7 @@ all_sprites = pygame.sprite.Group()
 obj = pygame.sprite.Group()
 slots = pygame.sprite.Group()
 breakable = pygame.sprite.Group()
+breaked = pygame.sprite.Group()
 plyr = pygame.sprite.Group()
 obj.add(p.Wall((WIDTH // 2 - 100, HEIGHT // 2), pygame.Surface((200, 50)), RED))
 gr_x = 0
@@ -60,19 +63,43 @@ while running:
             HEIGHT = event.h
             surface = pygame.display.set_mode((event.w, event.h),
                                               pygame.RESIZABLE)
- 
+            gr_x = 0
             player.rect.x = WIDTH / 2
             player.rect.y = 50
+            obj = pygame.sprite.Group()
+            breakable = pygame.sprite.Group()
+            for i in range(20): 
+                grd = g.Ground((gr_x, HEIGHT),player)
+                obj.add(grd)
+                breakable.add(grd)
+                gr_x+=grd.rect.width-1
+
+            for x in range(20): 
+                for y in range(9):
+                    grd = st.Stone((x*(st.grass_texture.get_width()-1),(HEIGHT+grd.rect.height-1)+y*(st.grass_texture.get_height()-1)),player)
+                    obj.add(grd)
+                    breakable.add(grd)      
+            player.unt = obj
+            player.x_vel=0
+            player.y_vel=0
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:  # left mouse button
             # get the position of the mouse cursor
                 mouse_pos = pygame.mouse.get_pos()
             # check for collisions between the mouse cursor and the grass sprite
                 for sprite in breakable.sprites():
+            
                     collide = sprite.rect.collidepoint(mouse_pos)
-                    if collide and not player.is_breaking:
-                        breaking = b.Break(sprite.rect.topleft,sprite,player)
+                    if collide and not player.is_breaking and (ut.calc_dist(player.rect.x, player.rect.y,sprite.rect.x, sprite.rect.y)/48)<3:
+                        breaking = b.Break(sprite.rect.topleft,sprite,player,breaked)
                         all_sprites.add(breaking)
+                        xd = mouse_pos[0]-player.rect.x
+                        if xd<0 and player.left == False:
+                            player.t()
+                            player.left=True
+                        elif xd > 0 and player.left == True:
+                            player.t()
+                            player.left= False
                         break
         if event.type == pygame.MOUSEWHEEL:
             x = event.y
@@ -111,13 +138,21 @@ while running:
     y = player.y_vel
     for sp in obj.sprites():    
         a = sp.update(plauer=player,x_vel=x,y_vel=y)
+    for sp in breaked.sprites():    
+        a = sp.update(plauer=player,x_vel=x,y_vel=y)
+        if ut.calc_dist(player.rect.centerx,player.rect.centery,sp.rect.centerx, sp.rect.centery)/48 < 1:
+            player.add_inv(sp.daughter(1))
+            mx.play(mx.pickup)
+            sp.kill()
     screen.fill(BLACK)
     
     obj.draw(screen)
     all_sprites.draw(screen)
     slots.update(scr=screen)
     plyr.update()
+    breaked.draw(screen)
     plyr.draw(screen)
+    
     slots.draw(screen)
     
     pygame.display.flip()  

@@ -5,13 +5,14 @@ for a in range(0,10,1):
     txt[a] = pygame.transform.scale(txt[a], (48,48))
 FPS=30
 class Break(pygame.sprite.Sprite):
-    def __init__(self, pos, perent, player):
+    def __init__(self, pos, perent, player,group):
         pygame.sprite.Sprite.__init__(self)
         self.image = txt[0]
         self.rect = self.image.get_rect()
         self.rect.topleft = pos
         self.runn = 0
         self.st = 0
+        self.group = group
         self.change_stage_every = 0.1
         self.perent = perent 
         self.player = player
@@ -24,7 +25,7 @@ class Break(pygame.sprite.Sprite):
             self.image = txt[self.st]
             self.runn = 0
         if (self.st >= 9):
-            self.perent.brek(self.player)
+            self.perent.brek(self.player,self.group)
             self.player.is_breaking = False
             self.kill()
         if not self.player.is_breaking:

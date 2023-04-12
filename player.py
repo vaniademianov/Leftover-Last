@@ -119,12 +119,17 @@ class Player(pygame.sprite.Sprite):
             self.x_vel = 0
         if self.x_vel != 0:
             self.is_breaking = False
-        if self.x_vel<0 and self.left == False:
+        self.vel()
+    def vel(self):
+        if self.x_vel<0 and self.left == False and self.is_breaking == False:
             self.image=pygame.transform.flip(self.image,True,False)
             self.left=True
-        elif self.x_vel > 0 and self.left == True:
+        elif self.x_vel > 0 and self.left == True and self.is_breaking == False:
             self.image=pygame.transform.flip(self.image,True,False)
             self.left= False
+    def t(self):
+        self.image=pygame.transform.flip(self.image,flip_x=True, flip_y=False)
+        
     def add_inv(self, item):
         d = False
         for o in self.inv:
