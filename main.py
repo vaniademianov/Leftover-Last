@@ -7,10 +7,12 @@ import slot as s
 import stone as st
 import utils as ut
 import mixer as mx
+import time
 WIDTH = 800
 HEIGHT = 650
 FPS = 30
-
+cursor = pygame.image.load("res/bone.png")
+cursor = pygame.transform.scale(cursor,(64,64))
 # Задаем цвета 
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
@@ -23,7 +25,7 @@ print("You logged in as", nick)
 pygame.init()
 pygame.mixer.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT),pygame.RESIZABLE)
-pygame.display.set_caption("Leftover last, by RemoteAccess01 <3")
+pygame.display.set_caption("Leftover last, by Remote.NET Technologies")
 clock = pygame.time.Clock()
 all_sprites = pygame.sprite.Group()
 obj = pygame.sprite.Group()
@@ -34,7 +36,7 @@ plyr = pygame.sprite.Group()
 obj.add(p.Wall((WIDTH // 2 - 100, HEIGHT // 2), pygame.Surface((200, 50)), RED))
 gr_x = 0
     
-player = p.Player((WIDTH / 2, HEIGHT-200), pygame.Surface((30, 25)), pygame.Surface((30, 25)), RED, obj)
+player = p.Player((WIDTH / 2, HEIGHT-200), pygame.Surface((30, 25)), pygame.Surface((30, 25)), RED, obj, screen)
 plyr.add(player)
 for i in range(20): 
     grd = g.Ground((gr_x, HEIGHT),player)
@@ -50,10 +52,33 @@ for x in range(20):
 
 for i in range(9):
     slots.add(s.Slot((50+(i*80),HEIGHT-40),i,player))
+
 # slots.add(s.Slot((WIDTH/3+50,HEIGHT),1,player))
 running = True
+pygame.mouse.set_visible(False)
+pointerImg_rect = cursor.get_rect()
+now_fps = 0
+timer = 0
+fp = 0
+loooped = 0
+average = 0
+font = pygame.font.Font('freesansbold.ttf', 32)
+ 
+# create a text surface object,
+# on which text is drawn on it.
+fps_text_avg = font.render("AVERAGE  FPS: " + str(round(clock.get_fps(),2)), True, BLUE)
+fps_text = font.render("FPS: " + str(round(clock.get_fps(),2)), True, GREEN)
+# create a rectangular object for the
+# text surface object
+textRect = fps_text.get_rect()
+textAvgRect = fps_text_avg.get_rect()
+# set the center of the rectangular object.
+textRect.topleft = (0, 0)
+textAvgRect.topleft = (0, 30)
 while running:
-    clock.tick(FPS) 
+    clock.tick(FPS)
+    ytime = time.time()
+    mouse_pos = pygame.mouse.get_pos()
     for event in pygame.event.get():
 
         if event.type == pygame.QUIT:
@@ -85,7 +110,7 @@ while running:
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:  # left mouse button
             # get the position of the mouse cursor
-                mouse_pos = pygame.mouse.get_pos()
+                
             # check for collisions between the mouse cursor and the grass sprite
                 for sprite in breakable.sprites():
             
@@ -147,14 +172,24 @@ while running:
     screen.fill(BLACK)
     
     obj.draw(screen)
+    
     all_sprites.draw(screen)
     slots.update(scr=screen)
-    plyr.update()
+    
     breaked.draw(screen)
     plyr.draw(screen)
-    
+    plyr.update()
     slots.draw(screen)
-    
+    pointerImg_rect.center  = pygame.mouse.get_pos()
+    if ut.checkFocus(mouse_pos, screen):
+        screen.blit(cursor, pointerImg_rect)
+    screen.blit(fps_text, textRect)
+    screen.blit(fps_text_avg, textAvgRect)
     pygame.display.flip()  
-
+    now_fps+=1
+    timer+= time.time()-ytime
+    average+= clock.get_fps()
+    loooped += 1
+    fps_text_avg = font.render("AVERAGE FPS: " + str(round(average/loooped,2)), True, BLUE)
+    fps_text = font.render("FPS: " + str(round(clock.get_fps(),2)), True, GREEN)
 pygame.quit()
